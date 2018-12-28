@@ -1,4 +1,4 @@
-# Wallpaper
+# Wallpaper 图片浏览APP
 <p>xamarin.android 图片浏览小程序开发，测试功能列表如下，先后顺序不代表优先级</p>
 <p>使用BottomNavigationView做底部导航【完成】</p>
 <p>viewpager配合底部导航栏实现滑动翻页的效果【完成】</p>
