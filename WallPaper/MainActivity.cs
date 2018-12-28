@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Graphics;
 using Android.OS;
+using Android.Provider;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
@@ -306,9 +307,59 @@ namespace WallPaper
 
         private void BtnDownloadWallpaper_Click(object sender, System.EventArgs e)
         {
-            Android.Util.Log.Info("WallPaper", "图片下载按钮被点击了");
-            Toast.MakeText(this, "图片正在下载中", ToastLength.Long).Show();
-            
+            try
+            {
+                if (SystemInfo.Image == null)
+                {
+                    Log.Info("WallPaper", "图片为空");
+                    Toast.MakeText(this, "图片为空", ToastLength.Long).Show();
+                    return;
+                }
+
+                //设置写以后，读的权限也是默认就有了
+                //bool isReadonly = Environment.MediaMountedReadOnly.Equals(Environment.ExternalStorageState);
+                //bool isWriteable = Environment.MediaMounted.Equals(Environment.ExternalStorageState);
+                //Log.Info("Wallpaper", $"权限检测：{isReadonly}/{isWriteable}");
+
+                Log.Info("WallPaper", "图片下载中");
+
+                Java.IO.File fileDir = new Java.IO.File("/sdcard/DCIM/wallpaper/");                         
+                if (!fileDir.Exists())
+                {
+                    var flag = fileDir.Mkdir();
+                    Log.Info("Wallpaper", $"目录{fileDir.AbsolutePath}创建结果：{flag}");
+                }
+                else
+                {
+                    Log.Info("Wallpaper", $"目录{fileDir.AbsolutePath}已经存在");
+                } 
+
+                string fileName = SystemInfo.WallpaperView.Code + ".jpg";
+                Java.IO.File fileImage = new Java.IO.File(fileDir, fileName);
+
+                using(Java.IO.FileOutputStream fos = new Java.IO.FileOutputStream(fileImage,false))
+                {
+                    using (var ms = new System.IO.MemoryStream())
+                    {
+                        SystemInfo.Image.Compress(Android.Graphics.Bitmap.CompressFormat.Jpeg, 100, ms);
+                        fos.Write(ms.ToArray());
+                    }
+                }
+
+                Log.Info("Wallpaper", $"图片{fileImage.AbsolutePath}下载完成");
+                Toast.MakeText(this, "图片下载完成", ToastLength.Long).Show();
+
+                //直接插入到媒体库中的方法
+                //var res = MediaStore.Images.Media.InsertImage(this.ContentResolver, SystemInfo.Image, SystemInfo.WallpaperView.Code, "wallpaper image");
+                
+                //更新媒体库，貌似没有生效
+                SendBroadcast(new Intent(Intent.ActionMediaScannerScanFile, Android.Net.Uri.Parse(fileImage.AbsolutePath)));
+            }
+            catch(Exception ex)
+            {
+                Log.Error("WallPaper", ex.ToString());
+                Toast.MakeText(this, ex.Message, ToastLength.Long).Show();
+            }           
         }
 
         private void BtnLogin_Click(object sender, System.EventArgs e)
