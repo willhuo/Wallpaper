@@ -3,4 +3,5 @@
     <string name="title_home">主页</string>
     <string name="title_dashboard">壁纸</string>
     <string name="title_notifications">我</string>
+    <string name="app_about">关于我\n广告说明</string>
 </resources>

@@ -8,7 +8,7 @@
 	android:minHeight="25px"
 	android:background="#ff00e676">
 	<LinearLayout
-		android:orientation="vertical"
+		android:orientation="horizontal"
 		android:minWidth="25px"
 		android:minHeight="100dp"
 		android:layout_width="match_parent"
@@ -16,11 +16,21 @@
 		android:id="@+id/linearLayoutUserInfo"
 		android:layout_marginBottom="20dp"
 		android:background="#ffffcdd2">
+		<ImageView
+			android:src="@drawable/dabai"
+			android:layout_width="110.0dp"
+			android:layout_height="110.0dp"
+			android:id="@+id/imageViewHeadPhoto"
+			android:layout_marginLeft="10dp"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp" />
 		<Button
 			android:text="登陆"
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:id="@+id/btnLogin" />
+			android:layout_width="110.0dp"
+			android:layout_height="50.0dp"
+			android:id="@+id/btnLogin"
+			android:layout_marginLeft="40dp"
+			android:layout_marginTop="30dp" />
 	</LinearLayout>
 	<LinearLayout
 		android:orientation="vertical"
@@ -29,6 +39,13 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:id="@+id/linearLayoutNotice"
-		android:background="#ffbbdefb" />
+		android:background="#ffbbdefb">
+		<TextView
+			android:text="@string/app_about"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/txtAbout"
+			android:layout_margin="10dp" />
+	</LinearLayout>
 
 </LinearLayout>

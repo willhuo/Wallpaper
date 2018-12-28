@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:background="#ff00e676">
+	<LinearLayout
+		android:orientation="horizontal"
+		android:minWidth="25px"
+		android:minHeight="100dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="#ffffcdd2"
+		android:layout_marginBottom="20dp"
+		android:id="@+id/linearLayout1">
+		<ImageView
+			android:src="@drawable/dabai"
+			android:layout_width="110.0dp"
+			android:layout_height="110.0dp"
+			android:id="@+id/imageViewHeadPhotoLogin"
+			android:layout_marginLeft="10dp"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp"/>
+		<RelativeLayout
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@+id/relativeLayout1">
+			<TextView
+				android:text="昵称：xxxx"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/txtNickname"
+				android:layout_marginTop="20dp"
+				android:layout_marginLeft="10dp" />
+			<TextView
+				android:text="积分：555"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/txtScore"
+				android:layout_below="@id/txtNickname"
+				android:layout_marginLeft="10dp"
+				android:layout_marginTop="10dp" />
+		</RelativeLayout>
+	</LinearLayout>
+	<LinearLayout
+		android:orientation="vertical"
+		android:minWidth="25px"
+		android:minHeight="25px"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:id="@+id/linearLayout1"
+		android:background="#ffbbdefb">
+		<TextView
+			android:text="@string/app_about"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/txtAboutLogin"
+			android:layout_margin="10dp"/>
+		<Button
+			android:text="设置"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/btnSetting"
+			android:layout_marginBottom="20dp"
+			android:layout_marginTop="10dp" />
+	</LinearLayout>
+
+</LinearLayout>
