@@ -54,13 +54,13 @@ namespace WallPaper.Utility
                 {
                     var view = GetWallPaperView((JsonObject)jores["Data"]);
                     view.Total = Convert.ToInt32(jores["Total"].ToString());
-                    SystemInfo.WallpaperId = view.WallPaperId;
+                    SystemInfo.WallpaperId = view.WallPaperId;                    
 
                     return new Tuple<bool, string, WallPaperView>(true, "", view);
                 }
                 else
                 {
-                    return new Tuple<bool, string, WallPaperView>(false, jores["Desc"].ToString(), null);
+                    return new Tuple<bool, string, WallPaperView>(false, jores["Desc"].ToString().Replace("\"", null), null);
                 }   
             }
             catch(Exception ex)
@@ -107,13 +107,69 @@ namespace WallPaper.Utility
                 }
                 else
                 {
-                    return new Tuple<bool, string, UserView>(false, jores["Desc"].ToString(), null);
+                    return new Tuple<bool, string, UserView>(false, jores["Desc"].ToString().Replace("\"", null), null);
                 }
             }
             catch (Exception ex)
             {
                 Android.Util.Log.Error("WallPaper", ex.ToString());
                 return new Tuple<bool, string, UserView>(false, ex.Message, null);
+            }
+        }
+        public Tuple<bool, string, List<ADView>> GetAdvertisements()
+        {
+            try
+            {
+                string postStr = $"Position=0";
+                byte[] buff = Encoding.UTF8.GetBytes(postStr);
+                URL url = new URL(SystemInfo.GetADsUrl);
+                HttpURLConnection httpUrlConnection = (HttpURLConnection)url.OpenConnection();
+                httpUrlConnection.DoOutput = true;
+                httpUrlConnection.RequestMethod = "POST";
+                httpUrlConnection.Connect();
+                Stream outputStream = httpUrlConnection.OutputStream;
+                outputStream.Write(buff, 0, buff.Length);
+                outputStream.Flush();
+                outputStream.Close();
+
+                var jores = (JsonObject)JsonObject.Load(httpUrlConnection.InputStream);
+                if (jores["Success"].ToString() == "true")
+                {
+                    var viewList = GetADViewList((JsonArray)jores["Data"]);
+                    return new Tuple<bool, string, List<ADView>>(true, "", viewList);
+                }
+                else
+                {
+                    return new Tuple<bool, string, List<ADView>>(false, jores["Desc"].ToString().Replace("\"", null), null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Android.Util.Log.Error("WallPaper", ex.ToString());
+                return new Tuple<bool, string, List<ADView>>(false, ex.Message, null);
+            }
+        }
+        public Tuple<bool,string> DeductScore(int userId)
+        {
+            try
+            {
+                var urlStr = SystemInfo.DeductScoreUrl + userId;
+                URL url = new URL(urlStr);
+                URLConnection connection = url.OpenConnection();
+                var jores = (JsonObject)JsonObject.Load(connection.InputStream);
+                if (jores["Success"].ToString() == "true")
+                {
+                    return new Tuple<bool, string>(true, "");
+                }
+                else
+                {
+                    return new Tuple<bool, string>(false, jores["Desc"].ToString().Replace("\"", null));
+                }
+            }
+            catch(Exception ex)
+            {
+                Android.Util.Log.Error("Wallpaper", ex.ToString());
+                return new Tuple<bool, string>(false, ex.Message);
             }
         }
 
@@ -165,6 +221,27 @@ namespace WallPaper.Utility
             view.CreatorId = Convert.ToInt32(jo["CreatorId"].ToString());
             view.Remark = jo["Remark"]?.ToString().Replace("\"", null);
             return view;
+        }
+        private List<ADView> GetADViewList(JsonArray ja)
+        {
+            var vlist = new List<ADView>();
+            foreach(var v in ja)
+            {
+                var jo = (JsonObject)v;
+                var view = new ADView();
+                view.ADId = Convert.ToInt32(jo["ADId"].ToString());
+                view.ADName = jo["ADName"].ToString().Replace("\"", null);
+                view.ImageUrl = jo["ImageUrl"].ToString().Replace("\"", null);
+                view.JumpUrl = jo["JumpUrl"].ToString().Replace("\"", null);
+                view.Position = Convert.ToInt32(jo["Position"].ToString());
+                view.IsActive = Convert.ToBoolean(jo["IsActive"].ToString().Replace("\"", null));
+                view.CreateTime = DateTime.Parse(jo["CreateTime"].ToString().Replace("\"", null));
+                view.UpdateTime = DateTime.Parse(jo["UpdateTime"].ToString().Replace("\"", null));
+                view.Remark = jo["Remark"]?.ToString().Replace("\"", null);
+                view.PositionCN = jo["PositionCN"].ToString().Replace("\"", null);
+                vlist.Add(view);
+            }
+            return vlist;
         }
     }
 }

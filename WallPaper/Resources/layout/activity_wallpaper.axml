@@ -3,32 +3,38 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	android:background="#fff4ff81">
 	<ImageView
 		android:src="@drawable/smile"
 		android:layout_width="match_parent"
-		android:layout_height="250.0dp"
+		android:layout_height="wrap_content"
 		android:minWidth="25px"
 		android:minHeight="25px"
 		android:id="@+id/imageViewWallpaper"
-		android:layout_marginTop="10dp" />
+		android:layout_weight="1"
+		android:scaleType="fitXY" />
 	<LinearLayout
 		android:orientation="horizontal"
 		android:minWidth="25px"
 		android:minHeight="25px"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/linearLayoutWallpaperPaging">
+		android:id="@+id/linearLayoutWallpaperPaging"
+		android:gravity="bottom"
+		android:layout_marginBottom="60dp">
 		<Button
 			android:text="上一张"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
 			android:id="@+id/btnPageUp"
-			android:layout_marginLeft="10dp" />
-		<Space
+			android:layout_marginLeft="10dp"
+			android:layout_weight="1" />
+		<Button
+			android:text="下载"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
-			android:id="@+id/space1"
+			android:id="@+id/btnDownloadWallpaper"
 			android:layout_weight="1" />
 		<Button
 			android:text="下一张"
@@ -36,35 +42,8 @@
 			android:layout_height="match_parent"
 			android:id="@+id/btnPageDown"
 			android:layout_gravity="bottom"
-			android:layout_marginRight="10dp" />
+			android:layout_marginRight="10dp"
+			android:layout_weight="1" />
 	</LinearLayout>
-	<TextView
-		android:text="图像名称：花卉"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/labWallpaperName"
-		android:layout_marginLeft="10dp"
-		android:layout_marginTop="10dp" />
-	<TextView
-		android:text="图像像素：1024x768"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/labWallpaperPixel"
-		android:layout_marginLeft="10dp" />
-	<TextView
-		android:text="图像大小：10M"
-		android:textAppearance="?android:attr/textAppearanceMedium"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/labWallpaperSize"
-		android:layout_marginLeft="10dp" />
-	<Button
-		android:text="下载"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/btnDownloadWallpaper"
-		android:layout_marginTop="10dp" />
 
 </LinearLayout>

@@ -3,5 +3,6 @@
     <string name="title_home">主页</string>
     <string name="title_dashboard">壁纸</string>
     <string name="title_notifications">我</string>
-    <string name="app_about">关于我\n广告说明</string>
+    <string name="app_contact">联系方式\nQQ号：546613483\n微信号：tatlik24</string>
+    <string name="app_about">如果需要高清图片在pc下载，下载地址kayum.cn</string>
 </resources>

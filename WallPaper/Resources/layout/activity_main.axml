@@ -16,7 +16,7 @@
 		android:layout_alignBottom="@+id/navigation" />
 	<android.support.design.widget.BottomNavigationView
 		android:id="@+id/navigation"
-		android:layout_width="wrap_content"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginEnd="0dp"
 		android:layout_marginStart="0dp"
@@ -24,7 +24,8 @@
 		android:layout_alignParentBottom="true"
 		app:menu="@menu/navigation"
 		android:minWidth="25px"
-		android:minHeight="25px">
+		android:minHeight="25px"
+		android:layout_centerHorizontal="true" >
 	</android.support.design.widget.BottomNavigationView>
 
 </RelativeLayout>

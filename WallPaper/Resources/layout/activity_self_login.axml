@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
 	android:background="#ff00e676">
 	<LinearLayout
 		android:orientation="horizontal"
@@ -55,18 +56,28 @@
 		android:id="@+id/linearLayout1"
 		android:background="#ffbbdefb">
 		<TextView
+			android:text="@string/app_contact"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/txtContactLogin"
+			android:layout_margin="10dp" />
+		<TextView
 			android:text="@string/app_about"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/txtAboutLogin"
 			android:layout_margin="10dp"/>
+		<ImageView
+			android:src="@drawable/qrcode"
+			android:layout_width="match_parent"
+			android:layout_height="205dp"
+			android:id="@+id/imageView1" />
 		<Button
 			android:text="设置"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/btnSetting"
-			android:layout_marginBottom="20dp"
-			android:layout_marginTop="10dp" />
+			android:layout_marginBottom="50dp" />
 	</LinearLayout>
 
 </LinearLayout>
