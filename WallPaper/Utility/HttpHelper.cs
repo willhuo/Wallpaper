@@ -40,6 +40,7 @@ namespace WallPaper.Utility
 
         /*variable*/
 
+
         /*public method*/
         public Tuple<bool,string, WallPaperView> GetNextImageInfo(int step)
         {
@@ -60,7 +61,7 @@ namespace WallPaper.Utility
                 }
                 else
                 {
-                    return new Tuple<bool, string, WallPaperView>(false, jores["Desc"].ToString().Replace("\"", null), null);
+                    return new Tuple<bool, string, WallPaperView>(false, jores["Desc"]?.ToString().Replace("\"", null), null);
                 }   
             }
             catch(Exception ex)
@@ -172,6 +173,63 @@ namespace WallPaper.Utility
                 return new Tuple<bool, string>(false, ex.Message);
             }
         }
+        public Tuple<bool,string> Register(string username,string password)
+        {
+            try
+            {
+                string postStr = $"Username={username}&Password={password}&PasswordAgain={password}";
+                byte[] buff = Encoding.UTF8.GetBytes(postStr);
+                URL url = new URL(SystemInfo.RegUrl);
+                HttpURLConnection httpUrlConnection = (HttpURLConnection)url.OpenConnection();
+                httpUrlConnection.DoOutput = true;
+                httpUrlConnection.RequestMethod = "POST";
+                httpUrlConnection.Connect();
+                Stream outputStream = httpUrlConnection.OutputStream;
+                outputStream.Write(buff, 0, buff.Length);
+                outputStream.Flush();
+                outputStream.Close();
+
+                var jores = (JsonObject)JsonObject.Load(httpUrlConnection.InputStream);
+                if (jores["Success"].ToString() == "true")
+                {
+                    return new Tuple<bool, string>(true, "注册成功");
+                }
+                else
+                {
+                    return new Tuple<bool, string>(false, jores["Desc"].ToString().Replace("\"", null));
+                }
+            }
+            catch(Exception ex)
+            {
+                Android.Util.Log.Error("Wallpaper", ex.ToString());
+                return new Tuple<bool, string>(false, ex.Message);
+            }
+        }
+        public Tuple<bool,string,PackageView> GetServerVersion(string name)
+        {
+            try
+            {
+                var packageUrl = SystemInfo.UpdatePackageUrl + name;
+                Android.Util.Log.Info("WallPaper", "获取服务器软件包升级信息地址：" + packageUrl);
+                URL url = new URL(packageUrl);
+                URLConnection connection = url.OpenConnection();
+                var jores = (JsonObject)JsonObject.Load(connection.InputStream);
+                if (jores["Success"].ToString() == "true")
+                {
+                    var view = GetPackageView((JsonObject)jores["Data"]);
+                    return new Tuple<bool, string, PackageView>(true, "", view);
+                }
+                else
+                {
+                    return new Tuple<bool, string, PackageView>(false, jores["Desc"].ToString().Replace("\"", null), null);
+                }
+            }
+            catch(Exception ex)
+            {
+                Android.Util.Log.Error("Wallpaper", ex.ToString());
+                return new Tuple<bool, string, PackageView>(false, ex.Message, null);
+            }
+        }
 
 
         /*private method*/
@@ -180,7 +238,7 @@ namespace WallPaper.Utility
             var view = new WallPaperView();
             view.WallPaperId = Convert.ToInt32(jo["WallPaperId"].ToString());
             view.Code = jo["Code"].ToString().Replace("\"", null);
-            view.Title = jo["Title"].ToString().Replace("\"",null);
+            view.Title = jo["Title"]?.ToString().Replace("\"",null);
             view.ImageUrl = jo["ImageUrl"].ToString().Replace("\"", null);
             view.ImageDownloadUrl = jo["ImageDownloadUrl"]?.ToString().Replace("\"", null);
             view.OriginalSize = jo["OriginalSize"].ToString().Replace("\"", null);
@@ -192,7 +250,7 @@ namespace WallPaper.Utility
             view.CreateTime = DateTime.Parse(jo["CreateTime"].ToString().Replace("\"", null));
             view.UpdateTime = DateTime.Parse(jo["UpdateTime"].ToString().Replace("\"", null));
             view.IsDelete = Convert.ToBoolean(jo["IsDelete"].ToString().Replace("\"", null));
-            view.Remark = jo["Remark"].ToString().Replace("\"", null);
+            view.Remark = jo["Remark"]?.ToString().Replace("\"", null);
             view.OwnerId = string.IsNullOrEmpty(jo["OwnerId"]?.ToString()) ? 0 : Convert.ToInt32(jo["OwnerId"].ToString());
             view.OwnerName = jo["OwnerName"]?.ToString().Replace("\"", null);
             return view;
@@ -204,7 +262,7 @@ namespace WallPaper.Utility
             view.Username = jo["Username"].ToString().Replace("\"", null);
             view.Password = jo["Password"].ToString().Replace("\"", null);
             view.HeadPhotoUrl = jo["HeadPhotoUrl"]?.ToString().Replace("\"", null);
-            view.Name = jo["Name"].ToString().Replace("\"", null);
+            view.Name = jo["Name"]?.ToString().Replace("\"", null);
             view.Email = jo["Email"]?.ToString().Replace("\"", null);
             view.Mobile = jo["Mobile"]?.ToString().Replace("\"", null);
             view.Score = Convert.ToInt32(jo["Score"].ToString());
@@ -242,6 +300,16 @@ namespace WallPaper.Utility
                 vlist.Add(view);
             }
             return vlist;
+        }
+        private PackageView GetPackageView(JsonObject jo)
+        {
+            var view = new PackageView();
+            view.PackageId = Convert.ToInt32(jo["PackageId"].ToString());
+            view.Name = jo["Name"].ToString().Replace("\"", null);
+            view.Version = jo["Version"].ToString().Replace("\"", null);
+            view.Description = jo["Description"]?.ToString().Replace("\"", null);
+            view.Path = "http://www.zhcto.com"+jo["Path"].ToString().Replace("\"", null);
+            return view;
         }
     }
 }

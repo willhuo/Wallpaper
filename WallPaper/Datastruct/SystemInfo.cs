@@ -16,11 +16,22 @@ namespace WallPaper.Datastruct
 {
     public class SystemInfo
     {        
-        public static string BaseUrl = "http://wallpaper.zhcto.com";
-        public static string GetWallpaperUrl = "http://wallpaper.zhcto.com/wallpaper/getsingleimage?WallPaperId={0}&Step={1}";
-        public static string LoginUrl = "http://wallpaper.zhcto.com/User/Login";
-        public static string GetADsUrl = "http://wallpaper.zhcto.com/AD/GetPositionAds";
-        public static string DeductScoreUrl = "http://wallpaper.zhcto.com/User/DeductScore?UserId=";
+        //public static string BaseUrl = "http://wallpaper.zhcto.com";
+        //public static string GetWallpaperUrl = "http://wallpaper.zhcto.com/wallpaper/getsingleimage?WallPaperId={0}&Step={1}";
+        //public static string LoginUrl = "http://wallpaper.zhcto.com/User/Login";
+        //public static string GetADsUrl = "http://wallpaper.zhcto.com/AD/GetPositionAds";
+        //public static string DeductScoreUrl = "http://wallpaper.zhcto.com/User/DeductScore?UserId=";
+        //public static string RegUrl = "http://wallpaper.zhcto.com/User/Register";
+
+        public static string BaseUrl = "http://www.kayum.cn/";
+        public static string GetWallpaperUrl = "http://www.kayum.cn/wallpaper/getsingleimage?WallPaperId={0}&Step={1}";
+        public static string LoginUrl = "http://www.kayum.cn/User/Login";
+        public static string GetADsUrl = "http://www.kayum.cn/AD/GetPositionAds";
+        public static string DeductScoreUrl = "http://www.kayum.cn/User/DeductScore?UserId=";
+        public static string RegUrl = "http://www.kayum.cn/User/Register";
+
+
+        public static string UpdatePackageUrl = "http://www.zhcto.com/package/getupdatepackage?Name=";
 
 
         public static bool IsLogin { get; set; }
@@ -37,5 +48,8 @@ namespace WallPaper.Datastruct
         public static int ADIndex { get; set; }
         public static bool ShowAD { get; set; }
         public static string ADJumpUrl { get; set; }
+
+        public static PackageView PackageView { get; set; }
+        public static string ProgramName = "新疆壁纸APP";
     }
 }

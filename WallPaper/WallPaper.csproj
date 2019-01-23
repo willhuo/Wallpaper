@@ -37,9 +37,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <AndroidLinkMode>Full</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <AndroidSupportedAbis />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -69,6 +69,7 @@
     <Compile Include="BusinessLogic\WallpaperLogic.cs" />
     <Compile Include="Datastruct\SystemInfo.cs" />
     <Compile Include="DTO\ADView.cs" />
+    <Compile Include="DTO\PackageView.cs" />
     <Compile Include="DTO\UserView.cs" />
     <Compile Include="DTO\WallPaperView.cs" />
     <Compile Include="FullscreenWallpaperActivity.cs" />
@@ -79,9 +80,11 @@
     <Compile Include="Model\BrowseTraceEntity.cs" />
     <Compile Include="Model\UserEntity.cs" />
     <Compile Include="Model\WallpaperEntity.cs" />
+    <Compile Include="RegActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingActivity.cs" />
+    <Compile Include="Utility\EnviromentHelper.cs" />
     <Compile Include="Utility\HttpHelper.cs" />
     <Compile Include="Utility\RandomHelper.cs" />
     <Compile Include="Utility\SqliteHelper.cs" />
@@ -127,6 +130,9 @@
   <ItemGroup>
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.5.231</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Android.Support.Compat">
+      <Version>28.0.0.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Design" Version="27.0.2.1" />
   </ItemGroup>
@@ -201,6 +207,11 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\qrcode.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\activity_reg.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

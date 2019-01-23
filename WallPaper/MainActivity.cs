@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using Android;
+using Android.App;
 using Android.Content;
 using Android.Graphics;
 using Android.OS;
@@ -18,6 +19,7 @@ using WallPaper.BusinessLogic;
 using WallPaper.Datastruct;
 using WallPaper.DTO;
 using WallPaper.Utility;
+using AlertDialog = Android.App.AlertDialog;
 
 namespace WallPaper
 {
@@ -105,6 +107,10 @@ namespace WallPaper
 
             LoadImage(1);
         }
+        private void BtnDownloadWallpaperFree_Click(object sender, System.EventArgs e)
+        {
+            DownloadWallpaperFree();
+        }
         private void BtnDownloadWallpaper_Click(object sender, System.EventArgs e)
         {
             DownloadWallpaper();
@@ -113,6 +119,10 @@ namespace WallPaper
         {
             StartActivity(new Intent(this, typeof(LoginActivity)));
         }
+        private void BtnReg_Click(object sender, System.EventArgs e)
+        {
+            StartActivity(new Intent(this, typeof(RegActivity)));
+        }
         private void BtnSetting_Click(object sender, System.EventArgs e)
         {
             StartActivity(new Intent(this, typeof(SettingActivity)));
@@ -120,13 +130,16 @@ namespace WallPaper
 
 
         /*private method*/
-        private void Init()
-        {
+        private async void Init()
+        {        
             CheckLogin();
             LoadWallpaperBrowserTrace();
             GetAdsFromServer();
             RandomHelper.Default.ResetRandomCount();
             InitUI();
+
+            //更新检测
+            await Task.Run(() => Update());
         }
         private void CheckLogin()
         {
@@ -139,7 +152,7 @@ namespace WallPaper
         }
         private void LoadWallpaperBrowserTrace()
         {
-            SystemInfo.WallpaperId = WallpaperLogic.Default.GetBrowserWallpaperId();
+            //SystemInfo.WallpaperId = WallpaperLogic.Default.GetBrowserWallpaperId();
         }
         private void GetAdsFromServer()
         {
@@ -216,11 +229,13 @@ namespace WallPaper
             _ImageViewWallpaper = view.FindViewById<ImageView>(Resource.Id.imageViewWallpaper);
             Button btnPageUp = view.FindViewById<Button>(Resource.Id.btnPageUp);
             Button btnPageDown = view.FindViewById<Button>(Resource.Id.btnPageDown);
+            Button btnDownloadWallpaperFree = view.FindViewById<Button>(Resource.Id.btnDownloadWallpaperFree);
             Button btnDownloadWallpaper = view.FindViewById<Button>(Resource.Id.btnDownloadWallpaper);
 
             _ImageViewWallpaper.Touch += ImageViewFullscreen_Touch;
             btnPageUp.Click += BtnPageUp_Click;
             btnPageDown.Click += BtnPageDown_Click;
+            btnDownloadWallpaperFree.Click += BtnDownloadWallpaperFree_Click;
             btnDownloadWallpaper.Click += BtnDownloadWallpaper_Click;
 
             LoadImage(1);
@@ -228,7 +243,10 @@ namespace WallPaper
         private void InitSeflUI(View view)
         {
             Button btnLogin = view.FindViewById<Button>(Resource.Id.btnLogin);
+            Button btnReg = view.FindViewById<Button>(Resource.Id.btnReg);
+
             btnLogin.Click += BtnLogin_Click;
+            btnReg.Click += BtnReg_Click;
         }
         private void InitSelfLoginUI(View view)
         {
@@ -360,6 +378,25 @@ namespace WallPaper
                 StartActivity(intent);
             }
         }
+        private void DownloadWallpaperFree()
+        {
+            if (SystemInfo.Image == null)
+            {
+                Log.Info("WallPaper", "图片为空");
+                Toast.MakeText(this, "图片为空", ToastLength.Long).Show();
+            }
+            else
+            {
+                //外部存储的运行时权限检测
+                Utility.EnviromentHelper.Default.ApplyRuntimePermission(this, Manifest.Permission.WriteExternalStorage, 1000);
+
+                //检测并创建图片保存文件夹
+                var fileDir = CreateWallpaperFolder();
+
+                //保存图片到本地
+                SaveWallpaper(fileDir);
+            }
+        }
         private void DownloadWallpaper()
         {
             try
@@ -368,18 +405,18 @@ namespace WallPaper
                 if (!BeforeDownloadWallpaperCheck())
                     return;
 
-                //设置写以后，读的权限也是默认就有了
-                //bool isReadonly = Environment.MediaMountedReadOnly.Equals(Environment.ExternalStorageState);
-                //bool isWriteable = Environment.MediaMounted.Equals(Environment.ExternalStorageState);
-                //Log.Info("Wallpaper", $"权限检测：{isReadonly}/{isWriteable}");
+                //外部存储的运行时权限检测
+                Utility.EnviromentHelper.Default.ApplyRuntimePermission(this, Manifest.Permission.WriteExternalStorage, 1000);
 
                 Log.Info("WallPaper", "图片下载中");
 
                 Task.Run(() =>
                 {
-                    var res = HttpHelper.Default.GetNextImage(SystemInfo.WallpaperView.ImageUrl);
+                    var res = HttpHelper.Default.GetNextImage(SystemInfo.WallpaperView.ImageUrl);                    
                     if (res.Item1)
                     {
+                        SystemInfo.Image = res.Item3;
+
                         //webapi扣除积分
                         var resDeductScore = HttpHelper.Default.DeductScore(SystemInfo.UserView.UserId);
 
@@ -430,7 +467,7 @@ namespace WallPaper
             Java.IO.File fileDir = new Java.IO.File("/sdcard/DCIM/wallpaper/");
             if (!fileDir.Exists())
             {
-                var flag = fileDir.Mkdir();
+                var flag = fileDir.Mkdirs();
                 Log.Info("Wallpaper", $"目录{fileDir.AbsolutePath}创建结果：{flag}");
             }
             else
@@ -580,7 +617,7 @@ namespace WallPaper
                 }
                 else
                 {
-                    RunOnUiThread(() => Toast.MakeText(this, res.Item2, ToastLength.Long).Show());
+                    RunOnUiThread(() => Toast.MakeText(this, string.IsNullOrEmpty(res.Item2) ? "已经是第一张图片" : res.Item2, ToastLength.Long).Show());
                 }
 
                 //与广告显示互斥
@@ -595,6 +632,71 @@ namespace WallPaper
             {
                 WallpaperLogic.Default.SaveBrowserWallpaperId(SystemInfo.WallpaperId);
             }
+        }
+        private void Update()
+        {
+            if(SystemInfo.PackageView==null)
+            {
+                var res = HttpHelper.Default.GetServerVersion(SystemInfo.ProgramName);
+                if(res.Item1)
+                {
+                    SystemInfo.PackageView = res.Item3;
+
+                    var currentVersion = EnviromentHelper.Default.GetVersion(this);
+
+                    if (currentVersion != SystemInfo.PackageView.Version)
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            //提示升级，跳转到浏览器下载                        
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            AlertDialog alertDialog = builder
+                                .SetTitle("升级提示")
+                                .SetMessage("发现新版本，是否进行升级？")
+                                .SetNegativeButton("取消", (s, e) =>
+                                {
+                                    Toast.MakeText(this, "更新已经取消", ToastLength.Long).Show();
+                                })
+                                .SetPositiveButton("升级", (s, e) =>
+                                {
+                                    //Toast.MakeText(this, "准备升级", ToastLength.Long).Show();
+                                    string url = SystemInfo.PackageView.Path;
+                                    Android.Util.Log.Info("Wallpaper", "APP下载地址："+url);
+                                    Intent intent = new Intent(Intent.ActionView);
+                                    intent.SetData(Android.Net.Uri.Parse(url));
+                                    StartActivity(intent);
+                                })
+                                .Create();
+                            alertDialog.Show();
+                        });
+                    }
+                }
+            }            
+        }
+        public bool CheckPermission()
+        {
+            //授权检测
+            if (CheckSelfPermission(Manifest.Permission.WriteExternalStorage) == Android.Content.PM.Permission.Granted)
+            {
+                Android.Util.Log.Info("Wallpaper", "外部存储已经授权");
+                return true;
+            }
+            else
+            {
+                Android.Util.Log.Info("Wallpaper", "外部存储未经授权");
+            }
+
+            string[] permissionArray = { Manifest.Permission.WriteExternalStorage };
+            if (ShouldShowRequestPermissionRationale(Manifest.Permission.WriteExternalStorage))
+            {
+                Snackbar.Make(FindViewById(Android.Resource.Id.Content), "申请存储写入权限", Snackbar.LengthIndefinite)
+                    .SetAction("OK", delegate { RequestPermissions(permissionArray, 1000); });
+            }
+            else
+            {
+                RequestPermissions(permissionArray, 1000);
+            }
+            return false;
         }
     }
 }

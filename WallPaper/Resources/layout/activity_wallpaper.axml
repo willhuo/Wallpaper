@@ -12,8 +12,7 @@
 		android:minWidth="25px"
 		android:minHeight="25px"
 		android:id="@+id/imageViewWallpaper"
-		android:layout_weight="1"
-		android:scaleType="fitXY" />
+		android:layout_weight="1"/>
 	<LinearLayout
 		android:orientation="horizontal"
 		android:minWidth="25px"
@@ -31,7 +30,13 @@
 			android:layout_marginLeft="10dp"
 			android:layout_weight="1" />
 		<Button
-			android:text="下载"
+			android:text="免费下载"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:id="@+id/btnDownloadWallpaperFree"
+			android:layout_weight="1" />
+		<Button
+			android:text="高清下载"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
 			android:id="@+id/btnDownloadWallpaper"
